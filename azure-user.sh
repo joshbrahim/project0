@@ -62,7 +62,7 @@ delete()
 {
 	userprincipalname=$1
 
-	result=$(az ad user list --query [].userPrincipalname | grep -E /$userprincipalname\)
+	result=$(az ad user list --query [].userPrincipalname | grep -E $userprincipalname)
 
 	if [ -z $result ]; then
 		echo 'This user does not exist.'
@@ -84,6 +84,7 @@ delete()
 
 
 # login to az ad script
+echo 'Az Login '
 az login -u $username
 
 admin =$(az role assignment list --include-classic-administrators \
