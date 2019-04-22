@@ -34,16 +34,10 @@ assign()
 	username=$2
 	role=$3
 
-	result=$(az ad user list --query [].userPrincipalname | grep -E /$username/)
-
-	# conditional for an invalid action
-	if [ $action != "create" ] && [ $action != "delete" ]; then
-		echo 'This is not a valid action' 
-		exit 1
-	fi
+	name=$(az ad user list --query [].userPrincipalname | grep -E /$username/)
 
 	# if user does not exist
-	if [ -n $result ]; then
+	if [ -n $name ]; then
         	echo 'This user does not exist.'
 		exit 1
 	fi
@@ -62,9 +56,9 @@ delete()
 {
 	userprincipalname=$1
 
-	result=$(az ad user list --query [].userPrincipalname | grep -E $userprincipalname)
+	name=$(az ad user list --query [].userPrincipalname | grep -E $userprincipalname)
 
-	if [ -z $result ]; then
+	if [ -z $name ]; then
 		echo 'This user does not exist.'
 		exit 1
 	fi
@@ -84,20 +78,21 @@ delete()
 
 
 # login to az ad script
-echo 'Az Login '
-az login -u $username
+#echo Az Login 
+#az login -u $username
 
-admin =$(az role assignment list --include-classic-administrators \
-	--query "[?id=='NA(classic admins)'].principalName" | grep -E $userprincipalname)
+# defining an admin
+admin=$(az role assignment list --include-classic-administrators --query \
+	 "[?id=='NA(classic admins)'].principalName" | grep -E $username)
 
-	# if user is an admin, can do actions
-	if ! [ -z $admin ]; then
-		# calling the functions
-		actions=$2
-		$actions $3 $4 $5
-	else
-		echo 'Action permission denied.'
-		exit 1
-	fi
+# if user is an admin, can do actions
+if [ -n $admin ]; then
+	# calling the functions
+	actions=$2
+	$actions $3 $4 $5
+else
+	echo 'Action permission denied.'
+	exit 1
+fi
 
 exit 0

@@ -5,7 +5,8 @@ cd ~
 
 if  [ -n $(which brew) ] && [ -n $(which az) ] && [ -n $(which git) ] && [ -n $(which node) ]; then
 	echo 'Validation of programs installed successful.'
-	
+	git init
+	npm init -y
 	#create git repository
 		mkdir -p \
 			git/.docker
@@ -47,10 +48,7 @@ if  [ -n $(which brew) ] && [ -n $(which az) ] && [ -n $(which git) ] && [ -n $(
 			git/CHANGELOG.md \
 			git/LICENSE.txt \
     			git/README.md
-	else
-	echo 'One or more required programs are not installed.Running installers...'
-	sh ./linux-setup.sh
-	echo 'Installers ran.'
+
 fi
 
 exit 0

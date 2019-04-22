@@ -6,7 +6,7 @@ cd ~
 
 #sudo updates
 sudo apt update
-sudo apt -y upgrade 
+sudo apt -y upgrade
 
 #install brew
 sudo apt-get install -y build-essential curl file git
@@ -14,16 +14,15 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/i
 echo 'brew installed/updated'
 
 #install az
-sudo apt-get install -y azure-cli
+brew install azure-cli
 echo 'az installed/updated'
 
 #install git
-sudo apt-get install -y git
+brew install git
 echo 'git installed/updated'
 
 #install node
-sudo apt install -y nodejs
-sudo apt install -y npm
+brew install node
 echo 'node installed/updated'
 
 exit 0
