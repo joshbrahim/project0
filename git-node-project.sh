@@ -1,54 +1,72 @@
 #!/bin/bash
 
-#verify linux setup
-cd ~
+#specified directory
+directory=$1
 
+#git account
+username=$2
+useremail=$3
+
+#verify setup
 if  [ -n $(which brew) ] && [ -n $(which az) ] && [ -n $(which git) ] && [ -n $(which node) ]; then
 	echo 'Validation of programs installed successful.'
-	git init
-	npm init -y
-	#create git repository
-		mkdir -p \
-			git/.docker
+else
+	echo 'One or more required programs are not installed..'
+	exit 1
+fi
+
+#check for directory
+if ! [ -d "$directory" ]; then
+	mkdir $directory
+fi
+
+#create git repository
+
+		mkdir \
+			$directory/.docker
 
    		touch \
-    			git/.docker/dockerfile \
-    			git/.docker/dockerup.yaml
+    			$directory/.docker/dockerfile \
+    			$directory/.docker/dockerup.yaml
 
 	## github
-		mkdir -p \
-    			git/.github/ISSUE_TEMPLATE \
-    			git/.github/PULL_REQUEST_TEMPLATE
+		mkdir \
+    			$directory/.github/ISSUE_TEMPLATE \
+    			$directory/.github/PULL_REQUEST_TEMPLATE
 
     		touch \
-    			git/.github/ISSUE_TEMPLATE/issue-template.md \
-    			git/.github/PULL_REQUEST_TEMPLATE/pull-request-template.md
+    			$directory/.github/ISSUE_TEMPLATE/issue-template.md \
+    			$directory/.github/PULL_REQUEST_TEMPLATE/pull-request-template.md
 
     		touch \
-    			git/.github/CODE-OF-CONDUCT.md \
-    			git/.github/CONTRIBUTING.md
+    			$directory/.github/CODE-OF-CONDUCT.md \
+    			$directory/.github/CONTRIBUTING.md
 
 	## root
     		mkdir \
-    			git/client \
-    			git/src \
-    			git/test
+    			$directory/client \
+    			$directory/src \
+    			$directory/test
 
     		touch \
-    			git/client/.gitkeep \
-    			git/src/.gitkeep \
-    			git/test/.gitkeep
+    			$directory/client/.gitkeep \
+    			$directory/src/.gitkeep \
+    			$directory/test/.gitkeep
 
    	 	touch \
-			git/.azureup.yaml \
-			git/.dockerignore \
-			git/.editorconfig \
-			git/.gitignore \
-			git/.markdownlint.yaml \
-			git/CHANGELOG.md \
-			git/LICENSE.txt \
-    			git/README.md
+			$directory/.azureup.yaml \
+			$directory/.dockerignore \
+			$directory/.editorconfig \
+			$directory/.gitignore \
+			$directory/.markdownlint.yaml \
+			$directory/CHANGELOG.md \
+			$directory/LICENSE.txt \
+    			$directory/README.md
 
-fi
+#git setup for repository
+git init
+git config $username
+git config $useremail
+npm init -y
 
 exit 0

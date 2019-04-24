@@ -4,12 +4,12 @@
 echo 'Need to install/update programs...'
 cd ~
 
-#sudo updates
+#updates
 sudo apt update
 sudo apt -y upgrade
+sudo apt-get install -y build-essential curl file git
 
 #install brew
-sudo apt-get install -y build-essential curl file git
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 echo 'brew installed/updated'
 

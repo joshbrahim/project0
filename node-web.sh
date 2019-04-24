@@ -1,33 +1,66 @@
 #!/bin/bash
 
+#conditional to see if node is installed
+if  [ -z $(which node) ]; then
+	echo 'Required programs currently not installed. Running installer...'
+	exit 1
+fi
+
 # start node function
 start()
 {
-	filename=$1
+	dirname=$1
 
-	# conditional to see if required programs are installed
-	if  [ -z $(which node) ]; then
-		echo 'Required programs currently not installed. Running installer...'
-		./linux-setup.sh
-	fi
-
-	if [ -e $filename ]; then
-		node $filename
-	else
-		echo 'File does not exist'
+	if ! [ -d $dirname ]; then
+		echo 'Directory does not exist'
 		exit 1
 	fi
+
+	#checking for start in json
+	cd $dirname
+	result=$(cat package.json | grep -E 'start')
+	if [ -z "$result" ]; then
+		echo 'Invalid start'
+		exit 1
+	fi
+
+	npm start
 }
 
 # stop function
 stop()
 {
+	dirname=$1
 
+	if ! [ -d $dirname ]; then
+                echo 'Directory does not exist'
+                exit 1
+        fi
+
+        #checking for stop in json
+        cd $dirname
+        result=$(cat package.json | grep -E 'stop')
+        if [ -z "$result" ]; then
+                echo 'Invalid stop'
+                exit 1
+        fi
+	npm stop
 }
 
-# running start or stop
 actions=$1
-$actions $2
+
+# running start or stop
+case $actions in
+	"start")
+		start $2
+	;;
+	"stop")
+		stop $2
+	;;
+*)
+	echo 'Invalid action.'
+	exit 1
+esac
 
 
 exit 0

@@ -5,13 +5,14 @@ username=$1
 #step 1 create user function here
 create()
 {
+	#variables for creating
 	userdisplayname=$1
 	DOMAIN=jbrahim385gmail.onmicrosoft.com
 	userprincipalname=$userdisplayname@$DOMAIN
 	random=testpassword
 	usersubscription=$2
 
-	# look at userprincipalname and match it to entry
+	# look at array of names and match it to entry
 	result=$(az ad user list --query [].userPrincipalname | grep -E /$userdisplayname/)
 
 	# if no user is found,then create user
@@ -20,6 +21,7 @@ create()
 		--display-name $userdisplayname --user-principal-name $userprincipalname \
 		--force-change-password-next-login --password $random \
 		--subscription $usersubscription
+		echo 'User created.'
 	else
 		echo 'This user already exists.'
 		exit 1
@@ -30,14 +32,15 @@ create()
 # step 2 assign function here
 assign()
 {
-	action=$1
-	username=$2
+	dusername=$1
+	username=$dusername@jbrahim385gmail.onmicrosoft.com
+	action=$2
 	role=$3
 
 	name=$(az ad user list --query [].userPrincipalname | grep -E /$username/)
 
 	# if user does not exist
-	if [ -n $name ]; then
+	if [ -z $name ]; then
         	echo 'This user does not exist.'
 		exit 1
 	fi
@@ -48,7 +51,7 @@ assign()
 	fi
 
 	# assignment action
-	az role assignment $action --assigner $username --role $role
+	az role assignment $action --assignee $username --role $role
 }
 
 # step 3 delete function here
@@ -63,6 +66,7 @@ delete()
 		exit 1
 	fi
 
+	#checks if user is admin
 	admin=$(az role assignment list \
 	--include-classic-administrators \
 	--query "[?id=='NA(classic admins)'].principalName" | grep -E $userprincipalname)
@@ -76,23 +80,20 @@ delete()
 	az ad user delete --upn-or-object-id $userprincipalname
 }
 
-
-# login to az ad script
-#echo Az Login 
-#az login -u $username
-
-# defining an admin
+# checks for an admin
 admin=$(az role assignment list --include-classic-administrators --query \
 	 "[?id=='NA(classic admins)'].principalName" | grep -E $username)
 
 # if user is an admin, can do actions
 if [ -n $admin ]; then
-	# calling the functions
-	actions=$2
-	$actions $3 $4 $5
+	echo 'Action permission granted.'
 else
 	echo 'Action permission denied.'
 	exit 1
 fi
+
+# calling the functions
+actions=$2
+$actions $3 $4 $5
 
 exit 0
