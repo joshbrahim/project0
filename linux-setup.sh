@@ -21,6 +21,10 @@ echo 'az installed/updated'
 brew install git
 echo 'git installed/updated'
 
+#install gcc
+brew install gcc
+echo 'gcc installed/updated'
+
 #install node
 brew install node
 echo 'node installed/updated'
