@@ -7,24 +7,26 @@ create()
 {
 	#variables for creating
 	userdisplayname=$1
-	DOMAIN=jbrahim385gmail.onmicrosoft.com
+	DOMAIN=wookiemonster385gmail.onmicrosoft.com
 	userprincipalname=$userdisplayname@$DOMAIN
-	random=testpassword
+	pass=testpassword123!
 	usersubscription=$2
 
 	# look at array of names and match it to entry
-	result=$(az ad user list --query [].userPrincipalname | grep -E /$userdisplayname/)
+	result=$(az ad user list --query [].userPrincipalName | grep -E /$userprincipalname/)
+
+	if [ -n "$result" ]; then
+	echo 'This user already exists'
+	exit 1
+	fi
 
 	# if no user is found,then create user
-	if [ -n $result ]; then
+	if [ -z "$result" ]; then
 		az ad user create \
 		--display-name $userdisplayname --user-principal-name $userprincipalname \
-		--force-change-password-next-login --password $random \
+		--force-change-password-next-login --password $pass \
 		--subscription $usersubscription
 		echo 'User created.'
-	else
-		echo 'This user already exists.'
-		exit 1
 	fi
 }
 
@@ -33,14 +35,14 @@ create()
 assign()
 {
 	dusername=$1
-	username=$dusername@jbrahim385gmail.onmicrosoft.com
+	username=$dusername@wookiemonster385gmail.onmicrosoft.com
 	action=$2
 	role=$3
 
 	name=$(az ad user list --query [].userPrincipalname | grep -E /$username/)
 
 	# if user does not exist
-	if [ -z $name ]; then
+	if [ -z "$name" ]; then
         	echo 'This user does not exist.'
 		exit 1
 	fi
@@ -57,11 +59,12 @@ assign()
 # step 3 delete function here
 delete()
 {
-	userprincipalname=$1
+	username=$1
+	userprincipalname=$username@wookiemonster385gmail.onmicrosoft.com
 
 	name=$(az ad user list --query [].userPrincipalname | grep -E $userprincipalname)
 
-	if [ -z $name ]; then
+	if [ -z "$name" ]; then
 		echo 'This user does not exist.'
 		exit 1
 	fi
@@ -71,7 +74,7 @@ delete()
 	--include-classic-administrators \
 	--query "[?id=='NA(classic admins)'].principalName" | grep -E $userprincipalname)
 
-	if ! [ -z $admin ]; then
+	if ! [ -z "$admin" ]; then
         	echo 'Action permission denied.'
         	exit 1
 	fi
@@ -85,7 +88,7 @@ admin=$(az role assignment list --include-classic-administrators --query \
 	 "[?id=='NA(classic admins)'].principalName" | grep -E $username)
 
 # if user is an admin, can do actions
-if [ -n $admin ]; then
+if [ -n "$admin" ]; then
 	echo 'Action permission granted.'
 else
 	echo 'Action permission denied.'

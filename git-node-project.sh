@@ -3,9 +3,6 @@
 #specified directory
 directory=$1
 
-#git account
-username=$2
-useremail=$3
 
 #verify setup
 if  [ -n $(which brew) ] && [ -n $(which az) ] && [ -n $(which git) ] && [ -n $(which node) ]; then
@@ -65,8 +62,6 @@ fi
 
 #git setup for repository
 git init
-git config $username
-git config $useremail
 npm init -y
 
 exit 0

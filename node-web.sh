@@ -2,7 +2,7 @@
 
 #conditional to see if node is installed
 if  [ -z $(which node) ]; then
-	echo 'Required programs currently not installed. Running installer...'
+	echo 'Node is not installed.'
 	exit 1
 fi
 
@@ -18,11 +18,11 @@ start()
 
 	#checking for start in json
 	cd $dirname
-	result=$(cat package.json | grep -E 'start')
-	if [ -z "$result" ]; then
-		echo 'Invalid start'
-		exit 1
-	fi
+        result=$(cat package.json | grep -E 'start')
+        if [ -z "$result" ]; then
+                echo 'Invalid start'
+                exit 1
+        fi
 
 	npm start
 }

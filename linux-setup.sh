@@ -5,8 +5,8 @@ echo 'Need to install/update programs...'
 cd ~
 
 #updates
-sudo apt update
-sudo apt -y upgrade
+apt update
+apt -y upgrade
 sudo apt-get install -y build-essential curl file git
 
 #install brew
